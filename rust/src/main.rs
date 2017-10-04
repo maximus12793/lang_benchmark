@@ -16,7 +16,7 @@ fn make_file(x: i32, data: &mut Vec<u8>) {
     writer.write_all(data.as_mut_slice()).unwrap();
 }
 
-fn collect_request(x: i32, url: &str) -> Result<i32, ()> {
+fn collect_request(x: i32, url: &str) -> FutureResult<i32, ()> {
     let mut data = Vec::new();
     let mut easy = Easy::new();
     easy.url(url).unwrap();
@@ -32,7 +32,7 @@ fn collect_request(x: i32, url: &str) -> Result<i32, ()> {
 
     }
     make_file(x, &mut data);
-    Ok(x)
+    ok(x)
 }
 
 fn main() {
@@ -40,16 +40,9 @@ fn main() {
     let pool = CpuPool::new(16);
     let output_futures: Vec<_> = (0..100)
         .into_iter()
-        .map(|ind| {
-            pool.spawn_fn(move || {
-                let output = collect_request(ind, url);
-                output
-            })
-        })
+        .map(|x| pool.spawn(collect_request(x, url)).forget())
         .collect();
 
+
     // println!("{:?}", output_futures.Item());
-    for i in output_futures {
-        i.wait().unwrap();
-    }
 }
