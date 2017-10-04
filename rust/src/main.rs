@@ -13,7 +13,7 @@ use futures_cpupool::CpuPool;
 use std::sync::{Mutex, Arc};
 
 
-use futures::Future;
+use futures::{Future, stream, Async};
 use tokio_core::reactor::Core;
 use tokio_curl::{Session, Perform};
 
@@ -50,7 +50,8 @@ fn main() {
     let handle = core.handle();
     let session = Session::new(handle);
 
-    let requests: Vec<_> = (0..30)
+    // let requests: Arc<Mutex<Vec<i32>>> = Arc::new(Mutex::new(Vec::new()));
+    let requests = (0..200)
         .into_iter()
         .map(|x| {
             let mut req = Easy::new();
@@ -60,15 +61,24 @@ fn main() {
                 io::stdout().write_all(data).unwrap();
                 Ok(data.len())
             }).unwrap();
-            session.perform(req);
+            session.perform(req)
+
         })
-        .collect();
-
-
-
-
-    core.run(requests).unwrap();
+        .collect::<Vec<_>>();
+    for mut x in requests {
+        loop {
+            match x.poll() {
+                Ok(Async::Ready(mut q)) => println!("{:?}", q.response_code()),
+                Ok(Async::NotReady) => println!("not ready"),
+                Err(e) => println!("error"),
+            }
+        }
+    }
 }
+// let out = requests.into_stream().wait();
+
+
+// core.run(requests).unwrap();
 
 
 

@@ -12,6 +12,5 @@
     "nightlyToolchain": "nightly-x86_64-apple-darwin"
   },
   "rust.rustLangSrcPath":
-    "/Users/maximilian.roquemore/Downloads/rust-master/src",
-  "rust.formatOnSave": true
+    "/Users/maximilian.roquemore/Downloads/rust-master/src"
 }
