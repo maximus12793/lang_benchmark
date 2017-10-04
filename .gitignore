@@ -2,3 +2,7 @@
 
 golang/data
 cpuprofile
+golang
+Cargo.lock
+rust/data
+rust/target/debug

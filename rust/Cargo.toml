@@ -1,0 +1,40 @@
+[package]
+name = "rust"
+version = "0.1.0"
+authors = ["maximus12793 <maximus12793@gmail.com>"]
+
+[dependencies]
+curl = "0.4.8"
+futures = "0.1.16"
+tokio = "0.0.0"
+tokio-curl = "0.1.10"
+fibers = "0.1.8"
+futures-cpupool = "0.1.6"
+
+
+[profile.dev]
+opt-level = 0      # controls the `--opt-level` the compiler builds with.
+                   # 0-1 is good for debugging. 2 is well-optimized. Max is 3.
+debug = true       # include debug information (debug symbols). Equivalent to
+                   # `-C debuginfo=2` compiler flag.
+rpath = false      # controls whether compiler should set loader paths.
+                   # If true, passes `-C rpath` flag to the compiler.
+lto = false        # Link Time Optimization usually reduces size of binaries
+                   # and static libraries. Increases compilation time.
+                   # If true, passes `-C lto` flag to the compiler.
+debug-assertions = true # controls whether debug assertions are enabled
+                   # (e.g. debug_assert!() and arithmetic overflow checks)
+codegen-units = 1  # if > 1 enables parallel code generation which improves
+                   # compile times, but prevents some optimizations.
+                   # Passes `-C codegen-units`. Ignored when `lto = true`.
+panic = 'unwind'   # panic strategy (`-C panic=...`), can also be 'abort'
+
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 1
+panic = 'unwind'
