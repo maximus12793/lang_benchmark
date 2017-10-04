@@ -4,5 +4,14 @@
   "go.formatTool": "gofmt",
   "go.gopath": "/Users/maximilian.roquemore/go/",
   "go.autocompleteUnimportedPackages": true,
-  "go.inferpath": true
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange",
+  "rust.mode": "legacy",
+  "rust.rustup": {
+    "toolchain": "stable-x86_64-apple-darwin",
+    "nightlyToolchain": "nightly-x86_64-apple-darwin"
+  },
+  "rust.rustLangSrcPath":
+    "/Users/maximilian.roquemore/Downloads/rust-master/src",
+  "rust.formatOnSave": true
 }
