@@ -1,0 +1,8 @@
+{
+  "go.formatOnSave": true,
+  "go.docsTool": "godoc",
+  "go.formatTool": "gofmt",
+  "go.gopath": "/Users/maximilian.roquemore/go/",
+  "go.autocompleteUnimportedPackages": true,
+  "go.inferpath": true
+}
