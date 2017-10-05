@@ -11,12 +11,10 @@ use futures::future::*;
 use std::fs::File;
 use futures_cpupool::CpuPool;
 use std::sync::{Mutex, Arc};
-
-
 use futures::{Future, stream, Async};
+use futures::stream::futures_unordered;
 use tokio_core::reactor::Core;
 use tokio_curl::{Session, Perform};
-
 
 
 fn make_file(x: i32, data: &mut Vec<u8>) -> usize {
@@ -26,13 +24,14 @@ fn make_file(x: i32, data: &mut Vec<u8>) -> usize {
     data.len()
 }
 
-fn collect_request(x: i32, url: &str) -> FutureResult<usize, ()> {
+fn collect_request(x: i32, url: &str, sess: &Session) -> FutureResult<Perform, ()> {
     let mut data = Vec::new();
     let mut easy = Easy::new();
     easy.get(true).unwrap();
     easy.url("https://www.rust-lang.org").unwrap();
     easy.write_function(|data| Ok(data.len())).unwrap();
-    ok(make_file(x, &mut data))
+    make_file(x, &mut data);
+    ok(sess.perform(easy))
 }
 
 fn main() {
@@ -43,25 +42,11 @@ fn main() {
     let pool = CpuPool::new_num_cpus();
     let session = Session::new(handle);
 
-    // let requests: Arc<Mutex<Vec<i32>>> = Arc::new(Mutex::new(Vec::new()));
-    let requests = (0..200)
-        .into_iter()
-        .map(|x| pool.spawn(collect_request(x, url)))
-        .collect::<Vec<_>>();
+    let requests = (0..20).into_iter().map(|x| {
+        pool.spawn(collect_request(x, url, &session))
+    });
 
-    let mut x = 30;
-    x += 30;
-    println!("Done :)");
-    println!("x is now {}", x);
-
-    // println!("{:?}", requests);
-    // for x in requests {
-    //     x.wait();
-    //     match x {
-    //         Ok(Async::Ready(x)) => println!("x is {}", x),
-    //         Ok(Async::NotReady(x)) => println!("x is {}", x),
-    //         Err(y) => println!("ERROR"),
-    //     }
-    // }
+    let performed = futures_unordered(requests); //????
+    performed.wait();
 }
 // let out = requests.into_stream().wait();

@@ -2,11 +2,30 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
       "type": "lldb",
       "request": "launch",
+      "name": "LLDB",
       "program": "${workspaceRoot}/rust/target/debug/downloader",
+      "args": [],
+      "cwd": "${workspaceRoot}/rust/",
       "sourceLanguages": ["rust"]
+    },
+    {
+      "name": "Debug (GDB)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/rust/target/debug/downloader",
+      "cwd": "${workspaceRoot}/rust/",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/local/bin/gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
   ]
 }
