@@ -4,5 +4,9 @@
   "go.formatTool": "gofmt",
   "go.gopath": "/Users/maximilian.roquemore/go/",
   "go.autocompleteUnimportedPackages": true,
-  "go.inferpath": true
+  "go.inferpath": true,
+  "files.associations": {
+    "fstream": "cpp",
+    "locale": "cpp"
+  }
 }

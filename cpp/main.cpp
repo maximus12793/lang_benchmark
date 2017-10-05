@@ -3,34 +3,27 @@
 #include <boost/format.hpp>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <curlpp/cURLpp.hpp>
+#include <curlpp/Easy.hpp>
+#include <curlpp/Options.hpp>
 
 using namespace std;
-namespace boost::fibers;
-namespace boost::this_fiber;
-namespace boost::format;
+using namespace boost::fibers;
+using namespace boost::this_fiber;
 
-void collect_data(int x, string url)
+int ct = 0;
+
+void collect_data()
 {
-    curlpp::options::Url urli(url);
-    curlpp::Easy myRequest;
-    myRequest.setOpt(urli);
-    myRequest.perform();
-    ostringstream os;
-    os << myRequest;
-
-    ofstream outFile(format("/data/%1%.txt") % x);
-    outFile << os.str();
-    outFile.close();
-}
-
-void long_running(int x)
-{
-    int sumi = x;
-    for (int i = 1; i < x; i++)
-    {
-        sumi *= i;
-    }
-    collect_dat(x, "https://en.wikipedia.org/wiki/Immanuel_Kant");
+    auto url = "https://en.wikipedia.org/wiki/Immanuel_Kant";
+    ct++;
+    std::ostringstream os;
+    os << curlpp::options::Url(url);
+    ofstream myfile;
+    myfile.open(str(boost::format("/data/%1%.txt") % ct));
+    myfile << os.str();
+    myfile.close();
 }
 
 int main()
@@ -43,7 +36,7 @@ int main()
         {
             continue;
         }
-        fibers::fiber f(long_running(i));
+        boost::fibers::fiber(long_running);
     }
     return 0;
 }
