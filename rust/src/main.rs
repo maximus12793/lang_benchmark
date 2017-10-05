@@ -11,7 +11,7 @@ use futures::future::*;
 use std::fs::File;
 use futures_cpupool::CpuPool;
 use std::sync::{Mutex, Arc};
-use futures::{Future, stream, Async};
+use futures::{Future, Stream, Async};
 use futures::stream::futures_unordered;
 use tokio_core::reactor::Core;
 use tokio_curl::{Session, Perform};
@@ -46,7 +46,6 @@ fn main() {
         pool.spawn(collect_request(x, url, &session))
     });
 
-    let performed = futures_unordered(requests); //????
-    performed.wait();
+    let performed = futures_unordered(requests).into_future();
 }
 // let out = requests.into_stream().wait();
