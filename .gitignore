@@ -6,3 +6,4 @@ golang
 Cargo.lock
 rust/data
 rust/target/debug
+rust/target
