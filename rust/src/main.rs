@@ -3,6 +3,7 @@ extern crate futures;
 extern crate tokio_core;
 extern crate tokio_curl;
 
+
 use tokio_core::reactor::Core;
 use futures::{Future, Stream};
 use futures::sync::mpsc;
@@ -73,7 +74,7 @@ fn main() {
     mem::drop(tx);
 
     rx.for_each(|x| {
-        println!("Done {}", x);
+        // println!("Done {}", x);
         Ok(())
     }).wait()
         .unwrap();
