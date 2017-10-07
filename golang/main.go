@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	"runtime/pprof"
+	// "runtime/pprof"
 	"sync"
 	"time"
 )
@@ -30,10 +30,10 @@ func grabPage(i int, wg *sync.WaitGroup) {
 }
 
 func main() {
-	f, _ := os.Create("cpuprofile")
+	// f, _ := os.Create("cpuprofile")
 
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
+	// pprof.StartCPUProfile(f)
+	// defer pprof.StopCPUProfile()
 	runtime.GOMAXPROCS(4)
 	start := time.Now()
 	var wg sync.WaitGroup
