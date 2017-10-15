@@ -2,6 +2,7 @@ extern crate curl;
 extern crate futures;
 extern crate tokio_core;
 extern crate tokio_curl;
+extern crate threadpool;
 
 
 use tokio_core::reactor::Core;
@@ -14,6 +15,7 @@ use std::io::{BufWriter, Write};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::mem;
+use threadpool::ThreadPool;
 
 fn make_file(x: i32, data: &[u8]) -> usize {
     let f = File::create(format!("./data/{}.txt", x)).expect("Unable to open file");
@@ -51,21 +53,18 @@ fn main() {
     let url = "https://en.wikipedia.org/wiki/Immanuel_Kant";
 
     let (tx, rx) = mpsc::channel(800);
+    let pool = ThreadPool::new(50);
 
-    let threads = (0..4)
+    let threads = (0..800)
         .map(|n| {
             let mut tx = tx.clone();
-            thread::spawn(move || {
+            pool.execute(move || {
                 let mut core = Core::new().unwrap();
-
                 let session = Session::new(core.handle());
-                let reqs = futures::stream::futures_unordered((n * 200..n * 200 + 200).map(|x| {
-                    collect_request(x, url, &session)
-                }));
+                let reqs = collect_request(n, url, &session);
 
-                core.run(reqs.for_each(
-                    move |x| tx.try_send(x).map_err(|e| panic!("{:?}", e)),
-                )).unwrap();
+                core.run(move |reqs| tx.try_send(reqs).map_err(|e| panic!("{:?}", e)))
+                    .unwrap();
             })
         })
         .collect::<Vec<_>>();
@@ -79,7 +78,7 @@ fn main() {
     }).wait()
         .unwrap();
 
-    for t in threads {
-        t.join().unwrap();
-    }
+    // for t in threads {
+    //     t.join().unwrap();
+    // }
 }
